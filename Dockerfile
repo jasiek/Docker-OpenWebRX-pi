@@ -1,6 +1,6 @@
 FROM debian:jessie
 
-MAINTAINER maugin.thomas@gmail.com
+MAINTAINER harenberg@gmail.com
 
 RUN apt-get update && \
     apt-get install -y wget libusb-1.0-0-dev pkg-config ca-certificates git-core cmake build-essential --no-install-recommends && \
@@ -28,6 +28,8 @@ WORKDIR /tmp
 
 ENV commit_id 1080e4ad237ab37e7d95129ff6aae73fa118f7c5
 
+
+# csdr needed a patch to compile on a Pi. I kept the patched version here
 RUN wget http://www.atlas.uni-wuppertal.de/~harenber/csdr.tar.gz && \
     mkdir csdr && cd csdr && tar xvzf ../csdr.tar.gz && \
     make && \
@@ -48,15 +50,5 @@ RUN git clone https://github.com/simonyiszk/openwebrx.git && \
 WORKDIR /opt/openwebrx
 
 EXPOSE 8073 8888 4951
-
-#RUN mkdir /opt/openwebrx/config
-#RUN rm -f /opt/openwebrx/config_webrx.py
-#RUN ln -s /opt/openwebrx/config/config_webrx.py /opt/openwebrx
-
-# Add Tini
-#ENV TINI_VERSION v0.16.1
-#ADD https://github.com/krallin/tini/releases/download/${TINI_VERSION}/tini-armhf /tini-armhf
-#RUN chmod +x /tini-armhf
-#ENTRYPOINT ["/tini-armhf"]
 
 CMD ["python2.7", "openwebrx.py"]
