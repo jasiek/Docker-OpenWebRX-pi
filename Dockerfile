@@ -1,4 +1,5 @@
-FROM debian:jessie
+FROM arm32v7/debian:stretch-slim
+COPY qemu-arm-static /usr/bin
 
 MAINTAINER harenberg@gmail.com
 
@@ -8,6 +9,7 @@ RUN apt-get update && \
     rm -rf /var/lib/apt/lists/*
 
 WORKDIR /tmp
+RUN mkdir -p /etc/modprobe.d
 RUN echo 'blacklist dvb_usb_rtl28xxu' > /etc/modprobe.d/raspi-blacklist.conf && \
     git clone git://git.osmocom.org/rtl-sdr.git && \
     mkdir rtl-sdr/build && \
@@ -30,8 +32,8 @@ ENV commit_id 1080e4ad237ab37e7d95129ff6aae73fa118f7c5
 
 
 # csdr needed a patch to compile on a Pi. I kept the patched version here
-RUN wget http://www.atlas.uni-wuppertal.de/~harenber/csdr.tar.gz && \
-    mkdir csdr && cd csdr && tar xvzf ../csdr.tar.gz && \
+RUN git clone https://github.com/jasiek/csdr.git && \
+    cd csdr && \
     make && \
     make install && \
     cd / && \
